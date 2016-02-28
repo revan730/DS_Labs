@@ -9,7 +9,7 @@ namespace DS_Lab1
     /// <summary>
     /// Класс для представления рёбер графа
     /// </summary>
-    class Edge
+    public class Edge
     {
         public int n1;
         public int n2;

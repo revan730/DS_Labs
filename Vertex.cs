@@ -9,7 +9,7 @@ namespace DS_Lab1
     /// <summary>
     /// Класс для представления вершин графа
     /// </summary>
-    class Vertex
+    public class Vertex
     {
         public List<int> adjances;//Список индексов смежных вершин
         public int ipower;

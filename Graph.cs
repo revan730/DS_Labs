@@ -13,7 +13,7 @@ namespace DS_Lab1
     /// 
     
     //TODO: Поиск кратчайшего пути работает только для ориентированного графа
-    class Graph
+    public class Graph
     {
         public int n, m, HPower; // n - количество вершин,m- рёбер,HPower - степень графа (-1 если не однородный)
         public Edge[] edges;
@@ -23,14 +23,12 @@ namespace DS_Lab1
         public int[,] DistMatr;
         public int[,] ReachMatr;
         public int[] Excs;
-        //private byte[] cl;//Массив цветов вершин для поиска в глубину
-        //public int[] p;//Массив предков для того же алгоритма
-        //private int cycle_st = -1, cycle_end;
         public bool Homogen;//Однородность графа
         public bool Oriented;
-        //public bool Cyclic;
+        public bool Cyclic;
         public int Radius;
         public int Diameter;
+        public List<string> catalogCycles = new List<string>();
 
         public Graph(string file,bool oriented)
         {
@@ -57,9 +55,7 @@ namespace DS_Lab1
             CheckLoopedVerteses();
             GetVertesesPower();
             CheckHomogeneity();
-            //cl = new byte[n];
-            //p = Enumerable.Repeat(-1,n).ToArray();
-            //FindCycles();
+            FindCycles();
         }
 
         private int[,] FillAdjacencyMatrix()//Заполнение матрицы смежности
@@ -67,7 +63,7 @@ namespace DS_Lab1
             int[,] AdjMatr = new int[n, n];
             for (int i = 0; i < m; i++)
             {
-                AdjMatr[edges[i].n1 - 1, edges[i].n2 - 1] = 1;
+                AdjMatr[edges[i].n1, edges[i].n2] = 1;
             }
             return AdjMatr;
         }
@@ -76,11 +72,11 @@ namespace DS_Lab1
         {
             int[,] IncMatr = new int[n, m];
             for (int i = 0; i < m; i++)
-                IncMatr[edges[i].n1 - 1, i] = -1;
+                IncMatr[edges[i].n1, i] = -1;
             for (int i = 0; i < m; i++)
-                 IncMatr[edges[i].n2 - 1, i] = 1;
+                 IncMatr[edges[i].n2, i] = 1;
             for (int i = 0; i < m; i++)
-                if (edges[i].n1 == edges[i].n2) IncMatr[edges[i].n1 - 1, i] = 2;
+                if (edges[i].n1 == edges[i].n2) IncMatr[edges[i].n1, i] = 2;
                 return IncMatr;
         }
 
@@ -162,7 +158,7 @@ namespace DS_Lab1
                 n1 = Int32.Parse(rawlist[c][0].ToString());
                 n2 = Int32.Parse(rawlist[c][2].ToString());
                 verteses[n1 - 1].adjances.Add(n2 - 1); 
-                edges[c] = new Edge(n1,n2);
+                edges[c] = new Edge(n1 - 1,n2 - 1);
 
             }
         }
@@ -202,12 +198,21 @@ namespace DS_Lab1
             if (Homogen) HPower = verteses[0].power;
         }
 
-        /*private void FindCycles()
+        private void FindCycles()//Поиск циклов
         {
-            for (int i = 0; i < n; i++) if (dfs(i)) break;
-            if (cycle_st == -1) Cyclic = false;
-            else Cyclic = true;
-        }*/
+            int[] color = new int[n];//Массив цветов вершин
+            List<Edge> E = edges.OfType<Edge>().ToList();//Процедура использует совокупность ребер в виде списков
+            for (int i = 0; i < n; i++)
+            {
+                for (int k = 0; k < n; k++)
+                    color[k] = 1;
+                List<int> cycle = new List<int>();
+                //поскольку в C# нумерация элементов начинается с нуля, то для
+                //удобочитаемости результатов поиска в список добавляем номер i + 1
+                cycle.Add(i + 1);
+                DFScycle(i, i, E, color, -1, cycle);
+            }
+        }
 
         private int[,] FloydWarshell()//Алгоритм Флойда - Уоршелла для матрицы расстояний
         {
@@ -285,27 +290,53 @@ namespace DS_Lab1
             return d;
         }
 
-        /*private bool dfs(int v)
+        private void DFScycle(int u, int endV, List<Edge> E, int[] color, int unavailableEdge, List<int> cycle)//Модификация алгоритма поиска в ширину для нахождения циклов
         {
-            cl[v] = 1;
-            for (int i = 0; i < n; ++i)
+            //если u == endV, то эту вершину перекрашивать не нужно, иначе мы в нее не вернемся, а вернуться необходимо
+            if (u != endV)
+                color[u] = 2;
+            else if (cycle.Count >= 2)
             {
-                int to = 0;
-                if (i < verteses[v].adjances.Count) to = verteses[v].adjances[i];
-                if (cl[to] == 0)
+                cycle.Reverse();
+                string s = cycle[0].ToString();
+                for (int i = 1; i < cycle.Count; i++)
+                    s += "-" + cycle[i].ToString();
+                bool flag = false; //есть ли палиндром для этого цикла графа в List<string> catalogCycles?
+                for (int i = 0; i < catalogCycles.Count; i++)
+                    if (catalogCycles[i].ToString() == s)
+                    {
+                        flag = true;
+                        break;
+                    }
+                if (!flag)
                 {
-                    p[to] = v;
-                    if (dfs(to)) return true;
+                    cycle.Reverse();
+                    s = cycle[0].ToString();
+                    for (int i = 1; i < cycle.Count; i++)
+                        s += "-" + cycle[i].ToString();
+                    catalogCycles.Add(s);
                 }
-                else if (cl[to] == 1)
+                return;
+            }
+            for (int w = 0; w < E.Count; w++)
+            {
+                if (w == unavailableEdge)
+                    continue;
+                if (color[E[w].n2] == 1 && E[w].n1 == u)
                 {
-                    cycle_end = v;
-                    cycle_st = to;
-                    return true;
+                    List<int> cycleNEW = new List<int>(cycle);
+                    cycleNEW.Add(E[w].n2 + 1);
+                    DFScycle(E[w].n2, endV, E, color, w, cycleNEW);
+                    color[E[w].n2] = 1;
+                }
+                else if (color[E[w].n1] == 1 && E[w].n2 == u)
+                {
+                    List<int> cycleNEW = new List<int>(cycle);
+                    cycleNEW.Add(E[w].n1 + 1);
+                    DFScycle(E[w].n1, endV, E, color, w, cycleNEW);
+                    color[E[w].n1] = 1;
                 }
             }
-            cl[v] = 2;
-            return false;
-        }*/
+        }
     }
 }

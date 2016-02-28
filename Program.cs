@@ -48,13 +48,13 @@ namespace DS_Lab1
                             break;
                         case 4:
                             PrintDistanceMatrix();
-                            //PrintReachMatrix();
-                            //PrintExcs();
+                            PrintReachMatrix();
+                            PrintExcs();
                             System.Console.WriteLine("Радиус графа: {0}", graph.Radius);
                             System.Console.WriteLine("Диаметр графа: {0}", graph.Diameter);
                             PrintCenters();
                             PrintLayers();
-                            //PrintCycles();
+                            PrintCycles();
                             break;
                         default:
                             System.Console.WriteLine("Try again");
@@ -156,14 +156,14 @@ namespace DS_Lab1
             System.Console.WriteLine();
         }
 
-        /*static void PrintCycles()
+        static void PrintCycles()
         {
-            if (graph.Cyclic)
+            if (graph.catalogCycles.Count > 0)
             {
-                System.Console.Write("Граф имеет простые циклы,например: ");
-                for (int i = 0; i < graph.n; i++) System.Console.Write("{0} ", graph.p[i]);
+                System.Console.WriteLine("Граф имеет простые циклы,например:{0}",graph.catalogCycles[0]);
+                //for (int i = 0; i < graph.catalogCycles.Count; i++) System.Console.WriteLine("{0}", graph.catalogCycles[i]);
             }
             else System.Console.WriteLine("Граф не имеет циклов");
-        }*/
+        }
     }
 }
