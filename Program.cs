@@ -14,7 +14,7 @@ namespace DS_Lab1
 
         static void Main(string[] args)
         {
-            graph = new Graph("tree.txt",true);
+            graph = new Graph("weaks.txt",true);
             graph.ProcessGraph();
             UserMenu();
         }
@@ -49,12 +49,13 @@ namespace DS_Lab1
                         case 4:
                             PrintDistanceMatrix();
                             PrintReachMatrix();
-                            PrintExcs();
+                            //PrintExcs();
                             System.Console.WriteLine("Радиус графа: {0}", graph.Radius);
                             System.Console.WriteLine("Диаметр графа: {0}", graph.Diameter);
                             PrintCenters();
                             PrintLayers();
                             PrintCycles();
+                            PrintCoherency();
                             break;
                         default:
                             System.Console.WriteLine("Try again");
@@ -164,6 +165,26 @@ namespace DS_Lab1
                 //for (int i = 0; i < graph.catalogCycles.Count; i++) System.Console.WriteLine("{0}", graph.catalogCycles[i]);
             }
             else System.Console.WriteLine("Граф не имеет циклов");
+        }
+
+        static void PrintCoherency()
+        {
+            switch (graph.Coherency)
+            {
+                case 3:
+                    System.Console.WriteLine("Граф сильно связный");
+                    break;
+
+                case 2:
+                    System.Console.WriteLine("Граф односторонне связный");
+                    break;
+                case 1:
+                    System.Console.WriteLine("Граф слабосвязный");
+                    break;
+                case 0:
+                    System.Console.WriteLine("Граф не связный");
+                    break;
+            }
         }
     }
 }

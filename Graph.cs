@@ -28,6 +28,7 @@ namespace DS_Lab1
         public bool Cyclic;
         public int Radius;
         public int Diameter;
+        public int Coherency;//0 - не связный,1 - слабосвязный,2 - односторонне связный,3 - сильно связный
         public List<string> catalogCycles = new List<string>();
 
         public Graph(string file,bool oriented)
@@ -35,6 +36,7 @@ namespace DS_Lab1
             InputFromFile(file);
             HPower = -1;
             Homogen = true;
+            Coherency = 3;
             Oriented = oriented;
         }
 
@@ -50,12 +52,13 @@ namespace DS_Lab1
                 SymmetrizeMatrix(ReachMatr);
             }
             Excs = FillExcentricitiesArr();
-            Radius = Excs.Where(x => x > 0).Min();
+            Radius = Excs.Min();
             Diameter = Excs.Max();
             CheckLoopedVerteses();
             GetVertesesPower();
             CheckHomogeneity();
             FindCycles();
+            CheckCoherence();
         }
 
         private int[,] FillAdjacencyMatrix()//Заполнение матрицы смежности
@@ -124,6 +127,46 @@ namespace DS_Lab1
             int max = 0;
             for (int i = 0; i < Matr.GetLength(0); i++) if (Matr[r, i] > max) max = Matr[r, i];
             return max;
+        }
+
+        private T[,] TransposeMatrix<T>(T[,] Matrix)
+        {
+            int n = Matrix.GetLength(0);
+            int m = Matrix.GetLength(1);
+            T[,] TMatr = new T[n,m];
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++)
+                    TMatr[i, j] = Matrix[j, i];
+            return TMatr;
+        }
+
+        private int[,] MultiplyMatrix(int[,] m1,int[,] m2)
+        {
+            int n = m1.GetLength(0);
+            int m = m2.GetLength(1);
+            int[,] resultMatrix = new int[n,m];
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j< m; j++)
+                {
+                    resultMatrix[i,j] = 0;
+                    for (int k = 0; k < m; k++)
+                    {
+                        resultMatrix[i, j] += m1[i, k] * m2[k, j];
+                    }
+                }
+             }
+            return resultMatrix;
+        }
+
+        private int[,] MatrixPower(int[,] Matrix,int p)
+        {
+            int n = Matrix.GetLength(0);
+            int m = Matrix.GetLength(1);
+            int[,] PMatr = new int[n,m];
+            Array.Copy(Matrix, PMatr, Matrix.Length);
+            for (int i = 1; i < p; i++) PMatr = MultiplyMatrix(PMatr, Matrix);
+            return PMatr;
         }
 
         private int[] FillExcentricitiesArr()
@@ -337,6 +380,38 @@ namespace DS_Lab1
                     color[E[w].n1] = 1;
                 }
             }
+        }
+
+        private void CheckCoherence()//Определение типа связности
+        {
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++)
+                    if (ReachMatr[i, j] == 0) Coherency = 2;
+            if (Coherency == 2)
+                for (int i = 0; i < n; i++)
+                    for (int j = 0; j < n; j++)
+                        if (ReachMatr[i, j] != 1 && ReachMatr[j,i] != 1) Coherency = 1;
+            if (Coherency == 1)
+            {
+                int[,] Matr = new int[n, n];
+                Array.Copy(AdjMatr, Matr, AdjMatr.Length);
+                 int[,] TMatr = TransposeMatrix(AdjMatr);
+
+                 for (int i = 0; i < n; i++)
+                     for (int j = 0; j < n; j++)
+                         Matr[i, j] += TMatr[i, j];
+
+                         for (int i = 0; i < n; i++)
+                             Matr[i, i] += 1;
+
+                Matr = MatrixPower(Matr, n - 1);
+
+                for (int i = 0; i < n; i++)
+                    for (int j = 0; j < n; j++)
+                        if (Matr[i, j] < 1) Coherency = 0;
+            }
+            else Coherency = 0;
+
         }
     }
 }
