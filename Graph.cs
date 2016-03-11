@@ -29,7 +29,7 @@ namespace DS_Lab1
         public int Radius;
         public int Diameter;
         public int Coherency;//0 - не связный,1 - слабосвязный,2 - односторонне связный,3 - сильно связный
-        public List<string> catalogCycles = new List<string>();
+        public List<string> catalogCycles = new List<string>();//Список с циклами графа в виде строки,например "1-2-1"
 
         public Graph(string file,bool oriented)
         {
@@ -333,7 +333,7 @@ namespace DS_Lab1
             return d;
         }
 
-        private void DFScycle(int u, int endV, List<Edge> E, int[] color, int unavailableEdge, List<int> cycle)//Модификация алгоритма поиска в ширину для нахождения циклов
+        private void DFScycle(int u, int endV, List<Edge> E, int[] color, int unavailableEdge, List<int> cycle)//Модификация алгоритма поиска в глубину для нахождения циклов
         {
             //если u == endV, то эту вершину перекрашивать не нужно, иначе мы в нее не вернемся, а вернуться необходимо
             if (u != endV)
@@ -386,26 +386,26 @@ namespace DS_Lab1
         {
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < n; j++)
-                    if (ReachMatr[i, j] == 0) Coherency = 2;
+                    if (ReachMatr[i, j] == 0) Coherency = 2;//Если матрица достижимости вся в единицах - граф сильно связный
             if (Coherency == 2)
                 for (int i = 0; i < n; i++)
                     for (int j = 0; j < n; j++)
-                        if (ReachMatr[i, j] != 1 && ReachMatr[j,i] != 1) Coherency = 1;
+                        if (ReachMatr[i, j] != 1 && ReachMatr[j,i] != 1) Coherency = 1;//Если треугольная в единицах - единосторонне связный
             if (Coherency == 1)
             {
                 int[,] Matr = new int[n, n];
                 Array.Copy(AdjMatr, Matr, AdjMatr.Length);
                  int[,] TMatr = TransposeMatrix(AdjMatr);
-
+                //Добавляем транспонированную матрицу смежности
                  for (int i = 0; i < n; i++)
                      for (int j = 0; j < n; j++)
                          Matr[i, j] += TMatr[i, j];
-
+                //Добавляем единичную матрицу
                          for (int i = 0; i < n; i++)
                              Matr[i, i] += 1;
-
+                //Возводим в степень n - 1
                 Matr = MatrixPower(Matr, n - 1);
-
+                //Если нет нулей - граф слабо связный
                 for (int i = 0; i < n; i++)
                     for (int j = 0; j < n; j++)
                         if (Matr[i, j] < 1) Coherency = 0;
