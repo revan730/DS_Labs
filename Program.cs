@@ -9,19 +9,39 @@ namespace DS_Lab1
 {
     class Program
     {
-        const string menu_text = "1.Вывести матрицу смежности\n2.Вывести матрицу инцидентности\n3.Степени вершин,изолированные и висящие\n4.Метрические параметры\n5.Поиск в глубину\n6.Поиск в ширину\n7.Выход";
+        const string menu_text = "1.Вывести матрицу смежности\n2.Вывести матрицу инцидентности\n3.Степени вершин,изолированные и висящие\n4.Метрические параметры\n5.Поиск в глубину\n6.Поиск в ширину\n7.Перезапуск\n8.Выход";
         static Graph graph;
         static void Main(string[] args)
         {
-            graph = new Graph("graph.txt",true);
-            graph.ProcessGraph();
+            SetGraph();
+            UserMenu();
+        }
+
+        static void SetGraph()//Ввод графа с файла
+        {
+            System.Console.WriteLine("Введите название файла с графом:");
+            try
+            {
+                graph = new Graph(System.Console.ReadLine(), true);
+                graph.ProcessGraph();
+            } catch (Exception e)
+            {
+                System.Console.WriteLine("Исключение:"+ e.Message);
+                Restart();
+            }
+        }
+
+        static void Restart()//Перезапуск программы
+        {
+            SetGraph();
             UserMenu();
         }
 
         static void UserMenu()//Вывод меню
         {
             int i = 0;
-            while (true)
+            bool restart = false;
+            while (!restart)
             {
                 System.Console.Clear();
                 System.Console.WriteLine(menu_text);
@@ -29,9 +49,6 @@ namespace DS_Lab1
                 if (Int32.TryParse(System.Console.ReadLine(), out i))
                     switch (i)
                     {
-                        case 7:
-                            System.Environment.Exit(1);
-                            break;
                         case 1:
                             PrintAdjacencyMatrix();
                             break;
@@ -49,10 +66,10 @@ namespace DS_Lab1
                             PrintDistanceMatrix();
                             PrintReachMatrix();
                             //PrintExcs();
-                            //System.Console.WriteLine("Радиус графа: {0}", graph.Radius);
-                            //System.Console.WriteLine("Диаметр графа: {0}", graph.Diameter);
-                            //PrintCenters();
-                            //PrintLayers();
+                            System.Console.WriteLine("Радиус графа: {0}", graph.Radius);
+                            System.Console.WriteLine("Диаметр графа: {0}", graph.Diameter);
+                            PrintCenters();
+                            PrintLayers();
                             PrintCycles();
                             PrintCoherency();
                             break;
@@ -62,10 +79,18 @@ namespace DS_Lab1
                         case 6:
                             StartBFS();
                             break;
+                        case 7:
+                            restart = true;
+                            Restart();
+                            break;
+                        case 8:
+                            System.Environment.Exit(1);
+                            break;
                         default:
                             System.Console.WriteLine("Try again");
                             UserMenu();
                             break;
+
                     }
                 System.Console.ReadKey();
             }
