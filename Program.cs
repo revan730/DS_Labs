@@ -9,7 +9,7 @@ namespace DS_Lab1
 {
     class Program
     {
-        const string menu_text = "1.Вывести матрицу смежности\n2.Вывести матрицу инцидентности\n3.Степени вершин,изолированные и висящие\n4.Метрические параметры\n5.Поиск в глубину\n6.Поиск в ширину\n7.Перезапуск\n8.Выход";
+        const string menu_text = "1.Вывести матрицу смежности\n2.Вывести матрицу инцидентности\n3.Степени вершин,изолированные и висящие\n4.Метрические параметры\n5.Поиск в глубину\n6.Поиск в ширину\n7.Топологическая сортировка\n8.Перезапуск\n9.Выход";
         static Graph graph;
         static void Main(string[] args)
         {
@@ -45,7 +45,6 @@ namespace DS_Lab1
             {
                 System.Console.Clear();
                 System.Console.WriteLine(menu_text);
-                //i = Int32.Parse(System.Console.ReadLine());
                 if (Int32.TryParse(System.Console.ReadLine(), out i))
                     switch (i)
                     {
@@ -80,15 +79,15 @@ namespace DS_Lab1
                             StartBFS();
                             break;
                         case 7:
+                            dfs d = new dfs(graph);
+                            d.TopologicalSort();
+                            break;
+                        case 8:
                             restart = true;
                             Restart();
                             break;
-                        case 8:
-                            System.Environment.Exit(1);
-                            break;
                         case 9:
-                            dfs d = new dfs(graph);
-                            d.TopologicalSort();
+                            System.Environment.Exit(1);
                             break;
                         default:
                             System.Console.WriteLine("Try again");
@@ -195,7 +194,6 @@ namespace DS_Lab1
         {
             if (graph.Cyclic)
             {
-                //System.Console.WriteLine("Граф имеет простые циклы,например:{0}",graph.catalogCycles[0]);
                 System.Console.WriteLine("Простые циклы:");
                 for (int i = 0; i < graph.catalogCycles.Count; i++) System.Console.WriteLine("{0}", graph.catalogCycles[i]);
             }

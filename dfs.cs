@@ -28,41 +28,52 @@ namespace DS_Lab1
 
         public void Trace(int p)//Обход графа
         {
-            DFS(p,true);
+            TrDFS(p);
         }
 
-        private void DFS(int v,bool r)//Алгоритм поиска в глубину,если r - режим вывода протокола обхода
+        private void TrDFS(int v)//Алгоритм поиска в глубину для обхода графа
         {
             k++;
             used[v] = true;
             path.Push(v);//Сохраняем текущую
-            if (r) System.Console.Write("Текущая вершина - {0},DFS-номер - {1},содержание стека:",v + 1,k);
+            System.Console.Write("Текущая вершина - {0},DFS-номер - {1},содержание стека:",v + 1,k);
             foreach (int i in path)
-               if (r) System.Console.Write(i + 1 + " ");//Вывод содержимого стека
-             if (r) System.Console.WriteLine();
+               System.Console.Write(i + 1 + " ");//Вывод содержимого стека
+             System.Console.WriteLine();
 
             foreach (int i in graph.verteses[v].adjances)
                 if (used[i] == false)
                 {
-                    DFS(i,r);
-                     if (r) path.Pop();//Извлекаем проверенные
+                    TrDFS(i);
+                    path.Pop();//Извлекаем проверенные
                 }
+            path.Push(v);
 
+        }
+
+        private void TopDFS(int v)//Алгоритм поиска в глубину для топологической сортировки
+        {
+            used[v] = true;
+            foreach (int i in graph.verteses[v].adjances)
+                if (used[i] == false)
+                    TopDFS(i);
+            path.Push(v);
         }
 
         public void TopologicalSort()//Топологическая сортировка графа
         {
+            int c = 1;
             if (!graph.Cyclic)
             {
                 for (int i = 0; i < graph.n; i++)
                     if (!used[i])
-                        DFS(i, false);
-                Stack<int> sorted = new Stack<int>();
-                while (path.Count != 0)//Инверсия стека для вывода топологической сортировки
-                    sorted.Push(path.Pop());
-                System.Console.Write("Содержимое стека топологической сортировки: ");
-                foreach (int i in sorted)
-                    System.Console.Write(i + 1 + " ");
+                        TopDFS(i);
+                System.Console.WriteLine("Содержимое стека топологической сортировки:\nНомер сортировки Вершина");
+                foreach (int i in path)
+                {
+                    System.Console.WriteLine("{0} {1}",c,i + 1);
+                    c++;
+                }
             }
             else System.Console.WriteLine("Граф цикличный,сортировка невозможна");
         }
