@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace DS_Lab1
 {
+    /// <summary>
+    /// Класс,реализующий алгоритм поиска в глубину
+    /// </summary>
+    /// 
+
     class dfs
     {
-        /// <summary>
-        /// Класс,реализующий алгоритм поиска в глубину
-        /// </summary>
         Graph graph;
         bool[] used;
         Stack<int> path;

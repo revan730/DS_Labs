@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace DS_Lab1
 {
+    /// <summary>
+    /// Класс,реализующий алгоритм поиска в ширину
+    /// </summary>
+    /// 
+
     class bfs
     {
-        /// <summary>
-        /// Класс,реализующий алгоритм поиска в ширину
-        /// </summary>
         Graph graph;
         bool[] used;
         Queue<int> q;

@@ -11,10 +11,9 @@ namespace DS_Lab1
     {
         const string menu_text = "1.Вывести матрицу смежности\n2.Вывести матрицу инцидентности\n3.Степени вершин,изолированные и висящие\n4.Метрические параметры\n5.Поиск в глубину\n6.Поиск в ширину\n7.Выход";
         static Graph graph;
-
         static void Main(string[] args)
         {
-            graph = new Graph("tree.txt",true);
+            graph = new Graph("graph.txt",true);
             graph.ProcessGraph();
             UserMenu();
         }
@@ -50,10 +49,10 @@ namespace DS_Lab1
                             PrintDistanceMatrix();
                             PrintReachMatrix();
                             //PrintExcs();
-                            System.Console.WriteLine("Радиус графа: {0}", graph.Radius);
-                            System.Console.WriteLine("Диаметр графа: {0}", graph.Diameter);
-                            PrintCenters();
-                            PrintLayers();
+                            //System.Console.WriteLine("Радиус графа: {0}", graph.Radius);
+                            //System.Console.WriteLine("Диаметр графа: {0}", graph.Diameter);
+                            //PrintCenters();
+                            //PrintLayers();
                             PrintCycles();
                             PrintCoherency();
                             break;
@@ -167,8 +166,9 @@ namespace DS_Lab1
         {
             if (graph.catalogCycles.Count > 0)
             {
-                System.Console.WriteLine("Граф имеет простые циклы,например:{0}",graph.catalogCycles[0]);
-                //for (int i = 0; i < graph.catalogCycles.Count; i++) System.Console.WriteLine("{0}", graph.catalogCycles[i]);
+                //System.Console.WriteLine("Граф имеет простые циклы,например:{0}",graph.catalogCycles[0]);
+                System.Console.WriteLine("Простые циклы:");
+                for (int i = 0; i < graph.catalogCycles.Count; i++) System.Console.WriteLine("{0}", graph.catalogCycles[i]);
             }
             else System.Console.WriteLine("Граф не имеет циклов");
         }

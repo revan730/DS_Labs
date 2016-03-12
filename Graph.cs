@@ -12,7 +12,7 @@ namespace DS_Lab1
     /// </summary>
     /// 
     
-    //TODO: Поиск кратчайшего пути работает только для ориентированного графа
+    //TODO: Поиск кратчайшего пути работает только для ориентированного графа,рефакторинг
     public class Graph
     {
         public int n, m, HPower; // n - количество вершин,m- рёбер,HPower - степень графа (-1 если не однородный)
@@ -372,7 +372,7 @@ namespace DS_Lab1
                     DFScycle(E[w].n2, endV, E, color, w, cycleNEW);
                     color[E[w].n2] = 1;
                 }
-                else if (color[E[w].n1] == 1 && E[w].n2 == u)
+                else if (color[E[w].n1] == 1 && E[w].n2 == u && !Oriented)//Только для ориентированных графов!
                 {
                     List<int> cycleNEW = new List<int>(cycle);
                     cycleNEW.Add(E[w].n1 + 1);
@@ -410,7 +410,6 @@ namespace DS_Lab1
                     for (int j = 0; j < n; j++)
                         if (Matr[i, j] < 1) Coherency = 0;
             }
-            else Coherency = 0;
 
         }
     }
