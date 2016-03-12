@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="bfs.cs" />
     <Compile Include="dfs.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="Graph.cs" />

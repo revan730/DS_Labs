@@ -9,7 +9,7 @@ namespace DS_Lab1
 {
     class Program
     {
-        const string menu_text = "1.Вывести матрицу смежности\n2.Вывести матрицу инцидентности\n3.Степени вершин,изолированные и висящие\n4.Метрические параметры\n5.Поиск в глубину\n6.Выход";
+        const string menu_text = "1.Вывести матрицу смежности\n2.Вывести матрицу инцидентности\n3.Степени вершин,изолированные и висящие\n4.Метрические параметры\n5.Поиск в глубину\n6.Поиск в ширину\n7.Выход";
         static Graph graph;
 
         static void Main(string[] args)
@@ -30,7 +30,7 @@ namespace DS_Lab1
                 if (Int32.TryParse(System.Console.ReadLine(), out i))
                     switch (i)
                     {
-                        case 6:
+                        case 7:
                             System.Environment.Exit(1);
                             break;
                         case 1:
@@ -59,6 +59,9 @@ namespace DS_Lab1
                             break;
                         case 5:
                             StartDFS();
+                            break;
+                        case 6:
+                            StartBFS();
                             break;
                         default:
                             System.Console.WriteLine("Try again");
@@ -199,6 +202,19 @@ namespace DS_Lab1
                 dfs dfs = new dfs(graph);
                 System.Console.WriteLine("Содержание стека на каждой итерации:");
                 dfs.Trace(v-1);
+            }
+
+        }
+
+        static void StartBFS()
+        {
+            int v;
+            System.Console.Write("Введите вершину для начала поиска в ширину:");
+            if (Int32.TryParse(System.Console.ReadLine(), out v))
+            {
+                bfs bfs = new bfs(graph);
+                System.Console.WriteLine("Содержание очереди на каждой итерации:");
+                bfs.Trace(v - 1);
             }
 
         }
