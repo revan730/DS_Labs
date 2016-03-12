@@ -86,6 +86,10 @@ namespace DS_Lab1
                         case 8:
                             System.Environment.Exit(1);
                             break;
+                        case 9:
+                            dfs d = new dfs(graph);
+                            d.TopologicalSort();
+                            break;
                         default:
                             System.Console.WriteLine("Try again");
                             UserMenu();
@@ -189,7 +193,7 @@ namespace DS_Lab1
 
         static void PrintCycles()
         {
-            if (graph.catalogCycles.Count > 0)
+            if (graph.Cyclic)
             {
                 //System.Console.WriteLine("Граф имеет простые циклы,например:{0}",graph.catalogCycles[0]);
                 System.Console.WriteLine("Простые циклы:");

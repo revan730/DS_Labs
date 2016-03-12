@@ -255,6 +255,7 @@ namespace DS_Lab1
                 cycle.Add(i + 1);
                 DFScycle(i, i, E, color, -1, cycle);
             }
+            if (catalogCycles.Count > 0) Cyclic = true;
         }
 
         private int[,] FloydWarshell()//Алгоритм Флойда - Уоршелла для матрицы расстояний
