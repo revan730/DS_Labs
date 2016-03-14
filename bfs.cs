@@ -26,12 +26,7 @@ namespace DS_Lab1
             k = 0;
         }
 
-        public void Trace(int p)//Выполнить поиск в ширину от указанной вершины с выводом результата по каждой операции
-        {
-            BFS(p);
-        }
-
-        private void BFS(int v)//Алгоритм поиска в ширину
+        public void BFS(int v)//Алгоритм поиска в ширину
         {
             used[v] = true;
             q.Enqueue(v);//Вставляем вершину в очередь

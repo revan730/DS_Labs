@@ -9,7 +9,7 @@ namespace DS_Lab1
 {
     class Program
     {
-        const string menu_text = "1.Вывести матрицу смежности\n2.Вывести матрицу инцидентности\n3.Степени вершин,изолированные и висящие\n4.Метрические параметры\n5.Поиск в глубину\n6.Поиск в ширину\n7.Топологическая сортировка\n8.Перезапуск\n9.Выход";
+        const string menu_text = "1.Вывести матрицу смежности\n2.Вывести матрицу инцидентности\n3.Степени вершин,изолированные и висящие\n4.Метрические параметры\n5.Поиск в глубину\n6.Поиск в ширину\n7.Топологическая сортировка\n8.Поиск компонент связности\n9.Перезапуск\n10.Выход";
         static Graph graph;
         static void Main(string[] args)
         {
@@ -83,10 +83,14 @@ namespace DS_Lab1
                             d.TopologicalSort();
                             break;
                         case 8:
+                            dfs d1 = new dfs(graph);
+                            d1.FindComps();
+                            break;
+                        case 9:
                             restart = true;
                             Restart();
                             break;
-                        case 9:
+                        case 10:
                             System.Environment.Exit(1);
                             break;
                         default:
@@ -228,7 +232,7 @@ namespace DS_Lab1
             {
                 dfs dfs = new dfs(graph);
                 System.Console.WriteLine("Содержание стека на каждой итерации:");
-                dfs.Trace(v-1);
+                dfs.TrDFS(v - 1);
             }
 
         }
@@ -241,7 +245,7 @@ namespace DS_Lab1
             {
                 bfs bfs = new bfs(graph);
                 System.Console.WriteLine("Содержание очереди на каждой итерации:");
-                bfs.Trace(v - 1);
+                bfs.BFS(v - 1);
             }
 
         }

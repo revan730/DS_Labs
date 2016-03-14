@@ -26,12 +26,7 @@ namespace DS_Lab1
             k = 0;
         }
 
-        public void Trace(int p)//Обход графа
-        {
-            TrDFS(p);
-        }
-
-        private void TrDFS(int v)//Алгоритм поиска в глубину для обхода графа
+        public void TrDFS(int v)//Алгоритм поиска в глубину для обхода графа
         {
             k++;
             used[v] = true;
@@ -47,8 +42,6 @@ namespace DS_Lab1
                     TrDFS(i);
                     path.Pop();//Извлекаем проверенные
                 }
-            path.Push(v);
-
         }
 
         private void TopDFS(int v)//Алгоритм поиска в глубину для топологической сортировки
@@ -58,6 +51,33 @@ namespace DS_Lab1
                 if (used[i] == false)
                     TopDFS(i);
             path.Push(v);
+        }
+
+        private void CmDFS(int v)//Алгоритм поиска в глубину для поиска компонентов связности
+        {
+            used[v] = true;
+            path.Push(v);
+            foreach (int i in graph.verteses[v].adjances)
+                if (used[i] == false)
+                {
+                    CmDFS(i);
+                }
+        }
+
+        public void FindComps()//Поиск компонентов связности
+        {
+            for (int i = 0;i < graph.n;i++)
+            {
+                if (!used[i])
+                {
+                    path.Clear();
+                    CmDFS(i);
+                    System.Console.Write("Компонента:");
+                    foreach (int c in path)
+                        System.Console.Write(c + 1 + " ");
+                    System.Console.WriteLine();
+                }
+            }
         }
 
         public void TopologicalSort()//Топологическая сортировка графа
