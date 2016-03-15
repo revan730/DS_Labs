@@ -9,7 +9,7 @@ namespace DS_Lab1
 {
     class Program
     {
-        const string menu_text = "1.Вывести матрицу смежности\n2.Вывести матрицу инцидентности\n3.Степени вершин,изолированные и висящие\n4.Метрические параметры\n5.Поиск в глубину\n6.Поиск в ширину\n7.Топологическая сортировка\n8.Поиск компонент связности\n9.Перезапуск\n10.Выход";
+        const string menu_text = "1.Вывести матрицу смежности\n2.Вывести матрицу инцидентности\n3.Степени вершин,изолированные и висящие\n4.Метрические параметры\n5.Поиск в глубину\n6.Поиск в ширину\n7.Топологическая сортировка\n8.Поиск компонент связности\n9.Расстояние между двумя вершинами\n10.Расстояние до других вершин\n11.Перезапуск\n12.Выход";
         static Graph graph;
         static void Main(string[] args)
         {
@@ -87,10 +87,16 @@ namespace DS_Lab1
                             d1.FindComps();
                             break;
                         case 9:
+                            PrintDist2();
+                            break;
+                        case 10:
+                            PrintDistA();
+                            break;
+                        case 11:
                             restart = true;
                             Restart();
                             break;
-                        case 10:
+                        case 12:
                             System.Environment.Exit(1);
                             break;
                         default:
@@ -248,6 +254,24 @@ namespace DS_Lab1
                 bfs.BFS(v - 1);
             }
 
+        }
+
+        static void PrintDist2()
+        {
+            System.Console.WriteLine("Введите номера двух вершин для вывода расстояния");
+            int v1 = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
+            int v2 = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
+            System.Console.WriteLine("Расстояние между вершинами:{0}", graph.DistMatr[v1, v2]);
+        }
+
+        static void PrintDistA()
+        {
+            System.Console.WriteLine("Введите номер вершины для вывода расстояний");
+            int v = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
+            for (int i = 0; i < graph.n; i++)
+                if (graph.DistMatr[v, i] != 0 && v != i)
+                    System.Console.WriteLine("К вершине {0} - {1}", i + 1, graph.DistMatr[v, i]);
+                else System.Console.WriteLine("Вершина {0} недостижима",i + 1);
         }
     }
 }

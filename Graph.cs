@@ -8,14 +8,15 @@ using System.Threading.Tasks;
 namespace DS_Lab1
 {
     /// <summary>
-    ///Класс,описывающий ориентированный граф 
+    ///Класс,описывающий ориентированный,взвешенный граф 
     /// </summary>
     /// 
     
     //TODO: Поиск кратчайшего пути работает только для ориентированного графа,рефакторинг
+    //Определение связности для графов с отрицательным весом работает не правильно (впрочем где еще кроме 3 лабы оно используется? :) )
     public class Graph
     {
-        public int n, m, HPower; // n - количество вершин,m- рёбер,HPower - степень графа (-1 если не однородный)
+        public int n, m, HPower; // n - количество вершин,m - рёбер,HPower - степень графа (-1 если не однородный)
         public Edge[] edges;
         public Vertex[] verteses;
         public int[,] AdjMatr;//Матрица смежности
@@ -66,7 +67,7 @@ namespace DS_Lab1
             int[,] AdjMatr = new int[n, n];
             for (int i = 0; i < m; i++)
             {
-                AdjMatr[edges[i].n1, edges[i].n2] = 1;
+                AdjMatr[edges[i].n1, edges[i].n2] = edges[i].w;
             }
             return AdjMatr;
         }
@@ -197,13 +198,14 @@ namespace DS_Lab1
             }
             for (c = 0; c < rawlist.GetLength(0); c++)
             {
-                int n1,n2;
-                n1 = Int32.Parse(rawlist[c][0].ToString());
-                n2 = Int32.Parse(rawlist[c][2].ToString());
+                int n1,n2,w;
+                n1 = Int32.Parse(rawlist[c].Split(' ')[0]);//Проверок на наличие числа в строке нет специально,так как ошибки ввода обработаются исключением
+                n2 = Int32.Parse(rawlist[c].Split(' ')[1]);//А стандартные значения лучше не задавать,потом труднее искать ошибки :)
+                w = Int32.Parse(rawlist[c].Split(' ')[2]);
                 verteses[n1 - 1].adjances.Add(n2 - 1); 
-                edges[c] = new Edge(n1 - 1,n2 - 1);
-
+                edges[c] = new Edge(n1 - 1,n2 - 1,w);
             }
+            file.Close();
         }
 
         private void InitializeVerteses()//Инициализация массива вершин
@@ -321,7 +323,7 @@ namespace DS_Lab1
                     u=index;
                     visited[u]=true;
                     for (i = 0; i < n; i++)
-                    if (!visited[i] && AdjMatr[u,i] > 0 && distance[u]!=Int32.MaxValue &&
+                    if (!visited[i] && AdjMatr[u,i] != 0 && distance[u]!=Int32.MaxValue &&
                     distance[u]+AdjMatr[u,i]<distance[i])
                     distance[i]=distance[u]+AdjMatr[u,i];
 

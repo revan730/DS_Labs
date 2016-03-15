@@ -37,7 +37,7 @@ namespace DS_Lab1
                 if (q.Count != 0 || k == 1) System.Console.Write("Текущая вершина - {0},BFS-номер - {1},содержание очереди:",t + 1,k);
                 for (int i = 0;i < graph.n;i++)
                 {
-                    if (graph.AdjMatr[t,i] == 1 && !used[i])
+                    if (graph.AdjMatr[t,i] != 0 && !used[i])
                     {
                         q.Enqueue(i);//Вставляем в очередь смежные,не посещенные вершины
                         used[i] = true;

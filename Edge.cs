@@ -11,14 +11,15 @@ namespace DS_Lab1
     /// </summary>
     public class Edge
     {
-        public int n1;
-        public int n2;
+        public int n1;//Вершина источник
+        public int n2;//Вершина назначения
+        public int w;//Вес ребра
 
-        public Edge(int n1,int n2)
+        public Edge(int n1,int n2,int w)
         {
             this.n1 = n1;
             this.n2 = n2;
-
+            this.w = w;
         }
 
     }
