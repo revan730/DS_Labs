@@ -16,7 +16,7 @@ namespace DS_Lab1
         Graph graph;
         bool[] used;
         Stack<int> path;
-        int k;//DFS-номер вершины
+        int k;//DFS-номер вершины,так же используеться в качестве счетчика компонентов связности
 
         public dfs(Graph g)
         {
@@ -70,14 +70,16 @@ namespace DS_Lab1
             {
                 if (!used[i])
                 {
+                    k++;
                     path.Clear();
                     CmDFS(i);
-                    System.Console.Write("Компонента:");
+                    System.Console.Write("Компонента №{0}:",k);
                     foreach (int c in path)
                         System.Console.Write(c + 1 + " ");
                     System.Console.WriteLine();
                 }
             }
+            System.Console.WriteLine("Количество компонент:{0}", k);
         }
 
         public void TopologicalSort()//Топологическая сортировка графа
