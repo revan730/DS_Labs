@@ -267,7 +267,7 @@ namespace DS_Lab1
             int v1 = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
             int v2 = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
             System.Console.WriteLine("Расстояние между вершинами:{0}", graph.DistMatr[v1, v2]);
-            if (graph.DistMatr[v1,v2] !=0) System.Console.WriteLine("Путь:" + graph.Dijkstra(v1,v2));
+            if (graph.DistMatr[v1,v2] !=0) System.Console.WriteLine("Путь:" + graph.Bellman(v1,v2));
         }
 
         static void PrintDistA()

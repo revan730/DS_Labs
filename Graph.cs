@@ -310,13 +310,15 @@ namespace DS_Lab1
                         ledges.Add(e);
                 g.Add(ledges);
             }
+
             bool[] used = new bool[n];
             int[] d = new int[n];
-            int[] p = new int[n];
-            for (int i = 0; i < n; i++)
+            int[] p = new int[n];//Массив предков для восстановления пути
+            for (int i = 0; i < n; i++)//Заполнение массива максимальными значениями
                 d[i] = Int32.MaxValue;
+
                 d[s] = 0;
-            for (int i = 0; i < n;i++)
+            for (int i = 0; i < n;i++)//Сам алгоритм
             {
                 var v = -1;
                 for (int j = 0;j < n;j++)
@@ -347,6 +349,48 @@ namespace DS_Lab1
                 spath += node + 1 + " ";
 
             return spath;
+        }
+
+        public String Bellman(int s,int f)
+        {
+            bool[] used = new bool[n];
+            int[] d = new int[n];
+            int[] p = new int[n];
+            for (int i = 0; i < n; i++)
+            {//Заполнение массива максимальными значениями
+                d[i] = Int32.MaxValue;
+                p[i] = -1;
+            }
+            d[s] = 0;
+            for (;;)
+            {
+                bool any = false;//флаг,показывающий изменилось ли что то на этой итерации алгоритма
+                for (int j =0;j < m;j++)
+                    if (d[edges[j].n1] < Int32.MaxValue)
+                        if (d[edges[j].n2] > d[edges[j].n1] + edges[j].w)
+                        {
+                            d[edges[j].n2] = d[edges[j].n1] + edges[j].w;
+                            p[edges[j].n2] = edges[j].n1;
+                            any = true;
+                        }
+                if (!any)
+                    break;
+            }
+            if (d[f] == Int32.MaxValue)
+                return String.Empty;
+            else
+            {
+                //Формируем стек пути
+                Stack<int> path = new Stack<int>();
+                for (int v = f; v != -1; v = p[v])
+                    path.Push(v);
+                path.Reverse();
+                String spath = String.Empty;//Сам путь в виде строки
+                foreach (int node in path)
+                    spath += node + 1 + " ";
+
+                return spath;
+            }
         }
 
         private void DFScycle(int u, int endV, List<Edge> E, int[] color, int unavailableEdge, List<int> cycle)//Модификация алгоритма поиска в глубину для нахождения циклов
