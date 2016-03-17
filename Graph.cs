@@ -29,6 +29,7 @@ namespace DS_Lab1
         public bool Cyclic;
         public int Radius;
         public int Diameter;
+        public bool NWeighted;//Есть ребра с отрицательным весом
         public int Coherency;//0 - не связный,1 - слабосвязный,2 - односторонне связный,3 - сильно связный
         public List<string> catalogCycles = new List<string>();//Список с циклами графа в виде строки,например "1-2-1"
 
@@ -45,7 +46,7 @@ namespace DS_Lab1
         {
             AdjMatr = FillAdjacencyMatrix();
             IncMatr = FillIncidenceMatrix();
-            DistMatr = Dijkstra();
+            DistMatr = FloydWarshell();
             ReachMatr = FloydWarshellR();
             if (!Oriented)
             {
@@ -185,7 +186,6 @@ namespace DS_Lab1
             line = file.ReadLine();
             n = Int32.Parse(line[0].ToString());
             m = Int32.Parse(line.Split(' ')[1].ToString());
-            //System.Console.WriteLine("n={0} m={1}", gb.n, gb.m);
             edges = new Edge[m];
             verteses = new Vertex[n];
             InitializeVerteses();
@@ -202,6 +202,7 @@ namespace DS_Lab1
                 n1 = Int32.Parse(rawlist[c].Split(' ')[0]);//Проверок на наличие числа в строке нет специально,так как ошибки ввода обработаются исключением
                 n2 = Int32.Parse(rawlist[c].Split(' ')[1]);//А стандартные значения лучше не задавать,потом труднее искать ошибки :)
                 w = Int32.Parse(rawlist[c].Split(' ')[2]);
+                if (w < 0) NWeighted = true;
                 verteses[n1 - 1].adjances.Add(n2 - 1); 
                 edges[c] = new Edge(n1 - 1,n2 - 1,w);
             }
@@ -210,7 +211,7 @@ namespace DS_Lab1
 
         private void InitializeVerteses()//Инициализация массива вершин
         {
-            for (int i = 0; i < verteses.GetLength(0); i++) verteses[i] = new Vertex();
+            for (int i = 0; i < verteses.GetLength(0); i++) verteses[i] = new Vertex(i);
         }
 
         private void GetVertesesPower()//Нахождение степеней вершин
@@ -298,42 +299,54 @@ namespace DS_Lab1
             return ConvertToInt(r);
         }
 
-        private int[,] Dijkstra()//Алгоритм Дейкстры для матрицы расстояний,не пытайся понять код,магия)
+        public String Dijkstra(int s,int f)//Алгоритм Дейкстры для нахождения кратчайшего пути между двумя вершинами
         {
-            int[,] d = new int[n,n];
-            for (int k = 0;k< n;k++)// Итерация алгоритма для каждой вершины
+            List<List<Edge>> g = new List<List<Edge>>();//алгоритм работает с структурой следующего вида - список g списков ребер которые выходят из g[i] вершины 
+            for (int i = 0;i < n;i++)//Формируем список списков g
             {
-                int count, index = 0, i, u, m = k+1;
-                int[] distance = new int[n];
-                bool[] visited = new bool[n];
-                for (i = 0; i < n; i++)
-                {
-                    distance[i]=Int32.MaxValue; 
-                    visited[i]=false;
-                }
-                distance[k]=0;
-                for (count=0; count < n-1; count++)
-                {
-                    int min=Int32.MaxValue;
-                    for (i=0; i < n; i++)
-                        if (!visited[i] && distance[i]<=min)
-                        {
-                            min=distance[i]; index=i;
-                        }
-                    u=index;
-                    visited[u]=true;
-                    for (i = 0; i < n; i++)
-                    if (!visited[i] && AdjMatr[u,i] != 0 && distance[u]!=Int32.MaxValue &&
-                    distance[u]+AdjMatr[u,i]<distance[i])
-                    distance[i]=distance[u]+AdjMatr[u,i];
+                List<Edge> ledges = new List<Edge>();//Список ребер
+                foreach (Edge e in edges)
+                    if (e.n1 == i)
+                        ledges.Add(e);
+                g.Add(ledges);
+            }
+            bool[] used = new bool[n];
+            int[] d = new int[n];
+            int[] p = new int[n];
+            for (int i = 0; i < n; i++)
+                d[i] = Int32.MaxValue;
+                d[s] = 0;
+            for (int i = 0; i < n;i++)
+            {
+                var v = -1;
+                for (int j = 0;j < n;j++)
+                    if (!used[j] && (v == -1 || d[j] < d[v]))
+                        v = j;
+                if (d[v] == Int32.MaxValue)
+                    break;
+                used[v]=true;
 
-                    for (i = 0; i < n; i++) d[k, i] = distance[i];
+                for (int j = 0;j < g[v].Count;j++)
+                {
+                    int to = g[v][j].n2, len = g[v][j].w;
+                    if (d[v] + len <d[to])
+                    {
+                        d[to] = d[v] + len;
+                        p[to] = v;
+                    }
                 }
             }
-            //Замена всех максимальных значений на 0
-            for (int i = 0; i < d.GetLength(0); i++)
-                for (int j = 0; j < d.GetLength(1); j++) if (d[i, j] == Int32.MaxValue) d[i, j] = 0;
-            return d;
+            //Формируем стек пути
+            Stack<int> path = new Stack<int>();
+            for (int v = f; v != s; v = p[v])
+                path.Push(v);
+            path.Push(s);
+            path.Reverse();
+            String spath = String.Empty;//Сам путь в виде строки
+            foreach (int node in path)
+                spath += node + 1 + " ";
+
+            return spath;
         }
 
         private void DFScycle(int u, int endV, List<Edge> E, int[] color, int unavailableEdge, List<int> cycle)//Модификация алгоритма поиска в глубину для нахождения циклов

@@ -258,14 +258,25 @@ namespace DS_Lab1
 
         static void PrintDist2()
         {
+            if (graph.NWeighted)
+            {
+                Console.WriteLine("Алгоритм Дейкстры не работает для графов с отрицательными весами ребер");
+                return;
+            }
             System.Console.WriteLine("Введите номера двух вершин для вывода расстояния");
             int v1 = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
             int v2 = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
             System.Console.WriteLine("Расстояние между вершинами:{0}", graph.DistMatr[v1, v2]);
+            if (graph.DistMatr[v1,v2] !=0) System.Console.WriteLine("Путь:" + graph.Dijkstra(v1,v2));
         }
 
         static void PrintDistA()
         {
+            if (graph.NWeighted)
+            {
+                Console.WriteLine("Алгоритм Дейкстры не работает для графов с отрицательными весами ребер");
+                return;
+            }
             System.Console.WriteLine("Введите номер вершины для вывода расстояний");
             int v = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
             for (int i = 0; i < graph.n; i++)
