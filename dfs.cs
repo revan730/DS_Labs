@@ -7,16 +7,14 @@ using System.Threading.Tasks;
 namespace DS_Lab1
 {
     /// <summary>
-    /// Класс,реализующий алгоритм поиска в глубину и связанные с ним операции
+    /// Depth-first search implementation
     /// </summary>
-    /// 
-
     class dfs
     {
         Graph graph;
         bool[] used;
         Stack<int> path;
-        int k;//DFS-номер вершины,так же используеться в качестве счетчика компонентов связности
+        int k;//DFS index
 
         public dfs(Graph g)
         {
@@ -26,25 +24,29 @@ namespace DS_Lab1
             k = 0;
         }
 
-        public void TrDFS(int v)//Алгоритм поиска в глубину для обхода графа
+        /// <summary>
+        /// DFS graph traversal method
+        /// </summary>
+        /// <param name="v">Start vertex</param>
+        public void TrDFS(int v)
         {
             k++;
             used[v] = true;
-            path.Push(v);//Сохраняем текущую
+            path.Push(v);
             System.Console.Write("Текущая вершина - {0},DFS-номер - {1},содержание стека:",v + 1,k);
             foreach (int i in path)
-               System.Console.Write(i + 1 + " ");//Вывод содержимого стека
+               System.Console.Write(i + 1 + " ");
              System.Console.WriteLine();
 
             foreach (int i in graph.verteses[v].adjances)
                 if (used[i] == false)
                 {
                     TrDFS(i);
-                    path.Pop();//Извлекаем проверенные
+                    path.Pop();
                 }
         }
 
-        private void TopDFS(int v)//Алгоритм поиска в глубину для топологической сортировки
+        private void TopDFS(int v)
         {
             used[v] = true;
             foreach (int i in graph.verteses[v].adjances)
@@ -53,7 +55,7 @@ namespace DS_Lab1
             path.Push(v);
         }
 
-        private void CmDFS(int v)//Алгоритм поиска в глубину для поиска компонентов связности
+        private void CmDFS(int v)
         {
             used[v] = true;
             path.Push(v);
@@ -64,7 +66,11 @@ namespace DS_Lab1
                 }
         }
 
-        public void FindComps()//Поиск компонентов связности
+
+        /// <summary>
+        /// Coherency components search
+        /// </summary>
+        public void FindComps()
         {
             for (int i = 0;i < graph.n;i++)
             {
@@ -82,7 +88,10 @@ namespace DS_Lab1
             System.Console.WriteLine("Количество компонент:{0}", k);
         }
 
-        public void TopologicalSort()//Топологическая сортировка графа
+        /// <summary>
+        /// Performs topological sorting of graph vertices
+        /// </summary>
+        public void TopologicalSort()
         {
             int c = 1;
             if (!graph.Cyclic)

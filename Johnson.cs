@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DS_Lab1
 {
+    /// <summary>
+    /// Class implementing Johnson's algorithm
+    /// </summary>
     class Johnson
     {
         Graph g;
@@ -15,6 +18,10 @@ namespace DS_Lab1
             this.g = g;
         }
 
+        /// <summary>
+        /// Build Distance matrix by Johnson's algorithm
+        /// </summary>
+        /// <returns>Two-dimensional array of distances between vertices</returns>
         public int[,] DistMatr()
         {
             var singlesp = Bellman(0);
@@ -23,7 +30,7 @@ namespace DS_Lab1
                 for (int i = 0; i < g.n; i++)
                 {
                     for (int j = 0; j < g.edges.Count(); j++)
-                        g.edges[j].w = g.edges[j].w + singlesp[g.edges[j].n1] - singlesp[g.edges[j].n2];
+                        g.edges[j].w = g.edges[j].w + singlesp[g.edges[j].n1] - singlesp[g.edges[j].n2];//Reweighting graph
                     return Dijkstra();
                 }
             }
@@ -56,7 +63,7 @@ namespace DS_Lab1
             return d;
         }
 
-        private int[,] Dijkstra()//Алгоритм Дейкстры для матрицы расстояний,не пытайся понять код,магия)
+        private int[,] Dijkstra()
         {
             int[,] d = new int[g.n, g.n];
             for (int k = 0; k < g.n; k++)// Итерация алгоритма для каждой вершины

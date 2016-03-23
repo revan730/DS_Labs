@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace DS_Lab1
 {
     /// <summary>
-    /// Класс для представления вершин графа
+    /// Class represening graph's vertex
     /// </summary>
     public class Vertex
     {
-        public List<int> adjances;//Список индексов смежных вершин
-        public int id;//Номер вершин
-        public int ipower;//Степень полувхода
-        public int opower;//Степень полувыхода
-        public int power;//Степень
+        public List<int> adjances;//List of adjacent vertices
+        public int id;
+        public int ipower;
+        public int opower;
+        public int power;
         public bool isIsolated;
         public bool isHanging;
         public bool isLooped;

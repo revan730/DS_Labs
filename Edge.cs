@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace DS_Lab1
 {
     /// <summary>
-    /// Класс для представления рёбер графа
+    /// Class representing graph's edge
     /// </summary>
     public class Edge
     {
-        public int n1;//Вершина источник
-        public int n2;//Вершина назначения
-        public int w;//Вес ребра
+        public int n1;//Source vertex
+        public int n2;//Destination vertex
+        public int w;
 
         public Edge(int n1,int n2,int w)
         {

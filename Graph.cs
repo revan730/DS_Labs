@@ -8,31 +8,29 @@ using System.Threading.Tasks;
 namespace DS_Lab1
 {
     /// <summary>
-    ///Класс,описывающий ориентированный,взвешенный граф 
+    ///Class representing oriented weighted graph
     /// </summary>
     /// 
     
-    //TODO: Поиск кратчайшего пути работает только для ориентированного графа,рефакторинг
-    //Определение связности для графов с отрицательным весом работает не правильно (впрочем где еще кроме 3 лабы оно используется? :) )
     public class Graph
     {
-        public int n, m, HPower; // n - количество вершин,m - рёбер,HPower - степень графа (-1 если не однородный)
+        public int n, m, HPower; // n - vertices count,m - edges count,HPower - graph power (-1 if not homogenic)
         public Edge[] edges;
         public Vertex[] verteses;
-        public int[,] AdjMatr;//Матрица смежности
-        public int[,] IncMatr;//Матрица инцидентности
+        public int[,] AdjMatr;
+        public int[,] IncMatr;
         public int[,] DistMatr;
         public int[,] ReachMatr;
         public int[] Excs;
-        public bool Homogen;//Однородность графа
+        public bool Homogen;
         public bool Oriented;
         public bool Cyclic;
         public int Radius;
         public int Diameter;
-        public bool NWeighted;//Есть ребра с отрицательным весом
+        public bool NWeighted;//Has edges with negative weights
         public bool NCyclic;
         public int Coherency;//0 - не связный,1 - слабосвязный,2 - односторонне связный,3 - сильно связный
-        public List<string> catalogCycles = new List<string>();//Список с циклами графа в виде строки,например "1-2-1"
+        public List<string> catalogCycles = new List<string>();//List of primitive cycles in form of string,like "1-2-1"
 
         public Graph(string file,bool oriented)
         {
@@ -43,28 +41,44 @@ namespace DS_Lab1
             Oriented = oriented;
         }
 
-        public void ProcessGraph()//Полное решение всех полей графа
+        public void ProcessGraph()
+        {
+            FillingMatrices();
+            FillingParams();
+            Checking();
+        }
+
+        private void FillingParams()
+        {
+            Radius = Excs.Min();
+            Diameter = Excs.Max();
+            GetVertesesPower();
+            FindCycles();
+        }
+
+        private void FillingMatrices()
         {
             AdjMatr = FillAdjacencyMatrix();
             IncMatr = FillIncidenceMatrix();
             DistMatr = FloydWarshell();
             ReachMatr = FloydWarshellR();
+            Excs = FillExcentricitiesArr();
             if (!Oriented)
             {
                 SymmetrizeMatrix(DistMatr);
                 SymmetrizeMatrix(ReachMatr);
             }
-            Excs = FillExcentricitiesArr();
-            Radius = Excs.Min();
-            Diameter = Excs.Max();
+
+        }
+
+        private void Checking()
+        {
             CheckLoopedVerteses();
-            GetVertesesPower();
             CheckHomogeneity();
-            FindCycles();
             CheckCoherence();
         }
 
-        private int[,] FillAdjacencyMatrix()//Заполнение матрицы смежности
+        private int[,] FillAdjacencyMatrix()
         {
             int[,] AdjMatr = new int[n, n];
             for (int i = 0; i < m; i++)
@@ -74,7 +88,7 @@ namespace DS_Lab1
             return AdjMatr;
         }
 
-        private int[,] FillIncidenceMatrix()//Заполение матрицы инцидентности
+        private int[,] FillIncidenceMatrix()
         {
             int[,] IncMatr = new int[n, m];
             for (int i = 0; i < m; i++)
@@ -179,7 +193,7 @@ namespace DS_Lab1
             return excs;
         }
 
-        private void InputFromFile(string path)//Ввод графа с файла
+        private void InputFromFile(string path)
         {
             int c = 0;
             string line;
@@ -210,12 +224,12 @@ namespace DS_Lab1
             file.Close();
         }
 
-        private void InitializeVerteses()//Инициализация массива вершин
+        private void InitializeVerteses()
         {
             for (int i = 0; i < verteses.GetLength(0); i++) verteses[i] = new Vertex(i);
         }
 
-        private void GetVertesesPower()//Нахождение степеней вершин
+        private void GetVertesesPower()
         {
             for (int i = 0; i < n; i++)
             {
@@ -245,7 +259,7 @@ namespace DS_Lab1
             if (Homogen) HPower = verteses[0].power;
         }
 
-        private void FindCycles()//Поиск циклов
+        private void FindCycles()
         {
             int[] color = new int[n];//Массив цветов вершин
             List<Edge> E = edges.OfType<Edge>().ToList();//Процедура использует совокупность ребер в виде списков
@@ -300,7 +314,13 @@ namespace DS_Lab1
             return ConvertToInt(r);
         }
 
-        public String Dijkstra(int s,int f)//Алгоритм Дейкстры для нахождения кратчайшего пути между двумя вершинами
+        /// <summary>
+        /// Dijkstra's algorithm for shortest path search
+        /// </summary>
+        /// <param name="s">Start vertex</param>
+        /// <param name="f">End vertex</param>
+        /// <returns>String with shortest path,separated by '-',or empty string if path doesn't exsist</returns>
+        public String Dijkstra(int s,int f)
         {
             List<List<Edge>> g = new List<List<Edge>>();//алгоритм работает с структурой следующего вида - список g списков ребер которые выходят из g[i] вершины 
             for (int i = 0;i < n;i++)//Формируем список списков g
@@ -352,9 +372,15 @@ namespace DS_Lab1
             return spath;
         }
 
+        /// <summary>
+        /// Bellman-Fords' algorithm for shortest path search
+        /// </summary>
+        /// <param name="s">Start vertex</param>
+        /// <param name="f">End vertex</param>
+        /// <returns>String with shortest path,separated by '-',or empty string if path doesn't exsist</returns>
         public String Bellman(int s,int f)
         {
-            int c;
+            int c;//Счетчик для поиска отрицательных циклов
             bool[] used = new bool[n];
             int[] d = new int[n];
             int[] p = new int[n];
@@ -379,7 +405,7 @@ namespace DS_Lab1
                             any = true;
                         }
                 }
-                if (c > m)
+                if (c > m)//Если цикл прошел больше итераций,чем вершин в графе,значит в графе имеется отрицательный цикл
                 {
                     NCyclic = true;
                     return String.Empty;
@@ -404,7 +430,16 @@ namespace DS_Lab1
             }
         }
 
-        private void DFScycle(int u, int endV, List<Edge> E, int[] color, int unavailableEdge, List<int> cycle)//Модификация алгоритма поиска в глубину для нахождения циклов
+        /// <summary>
+        /// DFS algorithm modification for primitive cycles search
+        /// </summary>
+        /// <param name="u">Current vertex</param>
+        /// <param name="endV">End vertex</param>
+        /// <param name="E">List of graph edges</param>
+        /// <param name="color">colors of vertices</param>
+        /// <param name="unavailableEdge"></param>
+        /// <param name="cycle">list of cycle vertices</param>
+        private void DFScycle(int u, int endV, List<Edge> E, int[] color, int unavailableEdge, List<int> cycle)
         {
             //если u == endV, то эту вершину перекрашивать не нужно, иначе мы в нее не вернемся, а вернуться необходимо
             if (u != endV)
@@ -453,7 +488,10 @@ namespace DS_Lab1
             }
         }
 
-        private void CheckCoherence()//Определение типа связности
+        /// <summary>
+        /// Check coherency type
+        /// </summary>
+        private void CheckCoherence()
         {
             for (int i = 0; i < n; i++)
                 for (int j = 0; j < n; j++)
