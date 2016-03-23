@@ -30,6 +30,7 @@ namespace DS_Lab1
         public int Radius;
         public int Diameter;
         public bool NWeighted;//Есть ребра с отрицательным весом
+        public bool NCyclic;
         public int Coherency;//0 - не связный,1 - слабосвязный,2 - односторонне связный,3 - сильно связный
         public List<string> catalogCycles = new List<string>();//Список с циклами графа в виде строки,например "1-2-1"
 
@@ -353,6 +354,7 @@ namespace DS_Lab1
 
         public String Bellman(int s,int f)
         {
+            int c;
             bool[] used = new bool[n];
             int[] d = new int[n];
             int[] p = new int[n];
@@ -362,10 +364,13 @@ namespace DS_Lab1
                 p[i] = -1;
             }
             d[s] = 0;
+            c = 0;
             for (;;)
             {
+                c++;
                 bool any = false;//флаг,показывающий изменилось ли что то на этой итерации алгоритма
-                for (int j =0;j < m;j++)
+                for (int j = 0; j < m; j++)
+                {
                     if (d[edges[j].n1] < Int32.MaxValue)
                         if (d[edges[j].n2] > d[edges[j].n1] + edges[j].w)
                         {
@@ -373,6 +378,12 @@ namespace DS_Lab1
                             p[edges[j].n2] = edges[j].n1;
                             any = true;
                         }
+                }
+                if (c > m)
+                {
+                    NCyclic = true;
+                    return String.Empty;
+                }
                 if (!any)
                     break;
             }

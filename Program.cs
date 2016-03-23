@@ -9,7 +9,7 @@ namespace DS_Lab1
 {
     class Program
     {
-        const string menu_text = "1.Вывести матрицу смежности\n2.Вывести матрицу инцидентности\n3.Степени вершин,изолированные и висящие\n4.Метрические параметры\n5.Поиск в глубину\n6.Поиск в ширину\n7.Топологическая сортировка\n8.Поиск компонент связности\n9.Расстояние между двумя вершинами\n10.Расстояние до других вершин\n11.Перезапуск\n12.Выход";
+        const string menu_text = "1.Алгоритм Беллмана - Форда\n2.Алгоритм Флойда - Уоршелла\n3.Алгоритм Джонсона\n4.Перезапуск\n5.Выход";
         static Graph graph;
         static void Main(string[] args)
         {
@@ -49,54 +49,36 @@ namespace DS_Lab1
                     switch (i)
                     {
                         case 1:
-                            PrintAdjacencyMatrix();
+                                PrintDist2();
+                                PrintDistA();
                             break;
                         case 2:
-                            PrintIncidenceMatrix();
+                            graph.Bellman(1, 2);
+                            if (!graph.NCyclic)
+                            {
+                                PrintDistanceMatrix();
+                                PrintDist2();
+                            }
+                            else Console.WriteLine("Граф имеет отрицательные циклы");
                             break;
                         case 3:
-                            PrintVertesesPower();
-                            PrintIsolated();
-                            PrintHanging();
-                            if (graph.Homogen) System.Console.WriteLine("Граф однородный,степень {0}", graph.HPower);
-                            else System.Console.WriteLine("Граф не однородный");
+                            Johnson j = new Johnson(graph);
+                            try
+                            {
+                                PrintMatrix(j.DistMatr());
+                                PrintDist2();
+                                PrintDistA();
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
                             break;
                         case 4:
-                            PrintDistanceMatrix();
-                            PrintReachMatrix();
-                            //PrintExcs();
-                            System.Console.WriteLine("Радиус графа: {0}", graph.Radius);
-                            System.Console.WriteLine("Диаметр графа: {0}", graph.Diameter);
-                            PrintCenters();
-                            PrintLayers();
-                            PrintCycles();
-                            PrintCoherency();
-                            break;
-                        case 5:
-                            StartDFS();
-                            break;
-                        case 6:
-                            StartBFS();
-                            break;
-                        case 7:
-                            dfs d = new dfs(graph);
-                            d.TopologicalSort();
-                            break;
-                        case 8:
-                            dfs d1 = new dfs(graph);
-                            d1.FindComps();
-                            break;
-                        case 9:
-                            PrintDist2();
-                            break;
-                        case 10:
-                            PrintDistA();
-                            break;
-                        case 11:
                             restart = true;
                             Restart();
                             break;
-                        case 12:
+                        case 5:
                             System.Environment.Exit(1);
                             break;
                         default:
@@ -258,21 +240,30 @@ namespace DS_Lab1
 
         static void PrintDist2()
         {
-            System.Console.WriteLine("Введите номера двух вершин для вывода расстояния");
-            int v1 = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
-            int v2 = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
-            System.Console.WriteLine("Расстояние между вершинами:{0}", graph.DistMatr[v1, v2]);
-            if (graph.DistMatr[v1, v2] != 0) System.Console.WriteLine("Путь:" + graph.Bellman(v1, v2));
+            graph.Bellman(1, 2);
+            if (!graph.NCyclic)
+            {
+                System.Console.WriteLine("Введите номера двух вершин для вывода расстояния");
+                int v1 = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
+                int v2 = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
+                System.Console.WriteLine("Расстояние между вершинами:{0}", graph.DistMatr[v1, v2]);
+                if (graph.DistMatr[v1, v2] != 0) System.Console.WriteLine("Путь:" + graph.Bellman(v1, v2));
+            }
+            else Console.WriteLine("Граф имеет отрицательные циклы");
         }
 
         static void PrintDistA()
         {
-            System.Console.WriteLine("Введите номер вершины для вывода расстояний");
-            int v = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
-            for (int i = 0; i < graph.n; i++)
-                if (graph.DistMatr[v, i] != 0 && v != i)
-                    System.Console.WriteLine("К вершине {0} - {1}", i + 1, graph.DistMatr[v, i]);
-                else System.Console.WriteLine("Вершина {0} недостижима",i + 1);
+            graph.Bellman(1,2);
+            if (!graph.NCyclic)
+            {
+                System.Console.WriteLine("Введите номер вершины для вывода расстояний");
+                int v = Int32.Parse(System.Console.ReadLine().ToString()) - 1;
+                for (int i = 0; i < graph.n; i++)
+                    if (graph.DistMatr[v, i] != 0 && v != i)
+                        System.Console.WriteLine("К вершине {0} - {1}", i + 1, graph.DistMatr[v, i]);
+                    else System.Console.WriteLine("Вершина {0} недостижима", i + 1);
+            }
         }
     }
 }
