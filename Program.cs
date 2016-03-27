@@ -253,7 +253,6 @@ namespace DS_Lab1
                 if (graph.DistMatr[v1, v2] != 0) System.Console.WriteLine("Путь:" + graph.Bellman(v1, v2));
             }
             else Console.WriteLine("Граф имеет отрицательные циклы");
-            Console.WriteLine("Has eurelian cycles={0},paths={1}",graph.hasECycle,graph.hasEPaths);
         }
 
         static void PrintDistA()
@@ -274,11 +273,14 @@ namespace DS_Lab1
         {
             if (graph.hasECycle)
             {
-                Console.WriteLine("Граф содержит эйлеровский цикл");
+                Console.WriteLine("Граф содержит эйлеровский цикл:{0}",graph.catalogCycles[0]);
             }
             else if (!graph.hasECycle && graph.hasEPaths)
             {
                 Console.WriteLine("Граф полуэйлеровский (не содержит цикл,но содержит путь)");
+                dfs d = new dfs(graph);
+                d.FindEPaths();
+
             }
             else Console.WriteLine("Граф не эйлеровский");
         }

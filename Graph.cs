@@ -385,7 +385,6 @@ namespace DS_Lab1
         public String Bellman(int s,int f)
         {
             int c;//Счетчик для поиска отрицательных циклов
-            bool[] used = new bool[n];
             int[] d = new int[n];
             int[] p = new int[n];
             for (int i = 0; i < n; i++)
@@ -568,6 +567,6 @@ namespace DS_Lab1
                         hasEPaths = true;
                     else hasEPaths = false;
             }
-        }
+        }        
     }
 }

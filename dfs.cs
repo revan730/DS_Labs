@@ -108,5 +108,25 @@ namespace DS_Lab1
             }
             else System.Console.WriteLine("Граф цикличный,сортировка невозможна");
         }
+        
+
+        /// <summary>
+        /// Coherency components search
+        /// </summary>
+        public void FindEPaths()
+        {
+            for (int i = 0;i < graph.n;i++)
+            {
+                if (!used[i])
+                {
+                    path.Clear();
+                    CmDFS(i);
+                    System.Console.Write("Эйлеров путь: ");
+                    foreach (int c in path.Reverse())
+                        System.Console.Write(c + 1 + " ");
+                    System.Console.WriteLine();
+                }
+            }
+        }
     }
 }

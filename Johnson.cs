@@ -68,7 +68,7 @@ namespace DS_Lab1
             int[,] d = new int[g.n, g.n];
             for (int k = 0; k < g.n; k++)// Итерация алгоритма для каждой вершины
             {
-                int count, index = 0, i, u, m = k + 1;
+                int count, index = 0, i, u;
                 int[] distance = new int[g.n];
                 bool[] visited = new bool[g.n];
                 for (i = 0; i < g.n; i++)
