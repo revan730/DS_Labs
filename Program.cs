@@ -9,7 +9,7 @@ namespace DS_Lab1
 {
     class Program
     {
-        const string menu_text = "1.Алгоритм Беллмана - Форда\n2.Алгоритм Флойда - Уоршелла\n3.Алгоритм Джонсона\n4.Перезапуск\n5.Выход";
+        const string menu_text = "1.Алгоритм Беллмана - Форда\n2.Алгоритм Флойда - Уоршелла\n3.Алгоритм Джонсона\n4.Эйлеровы циклы и пути\n5.Перезапуск\n6.Выход";
         static Graph graph;
         static void Main(string[] args)
         {
@@ -75,10 +75,13 @@ namespace DS_Lab1
                             }
                             break;
                         case 4:
+                            PrintEuCycles();
+                            break;
+                        case 5:
                             restart = true;
                             Restart();
                             break;
-                        case 5:
+                        case 6:
                             System.Environment.Exit(1);
                             break;
                         default:
@@ -250,6 +253,7 @@ namespace DS_Lab1
                 if (graph.DistMatr[v1, v2] != 0) System.Console.WriteLine("Путь:" + graph.Bellman(v1, v2));
             }
             else Console.WriteLine("Граф имеет отрицательные циклы");
+            Console.WriteLine("Has eurelian cycles={0},paths={1}",graph.hasECycle,graph.hasEPaths);
         }
 
         static void PrintDistA()
@@ -264,6 +268,19 @@ namespace DS_Lab1
                         System.Console.WriteLine("К вершине {0} - {1}", i + 1, graph.DistMatr[v, i]);
                     else System.Console.WriteLine("Вершина {0} недостижима", i + 1);
             }
+        }
+        
+        static void PrintEuCycles()
+        {
+            if (graph.hasECycle)
+            {
+                Console.WriteLine("Граф содержит эйлеровский цикл");
+            }
+            else if (!graph.hasECycle && graph.hasEPaths)
+            {
+                Console.WriteLine("Граф полуэйлеровский (не содержит цикл,но содержит путь)");
+            }
+            else Console.WriteLine("Граф не эйлеровский");
         }
     }
 }

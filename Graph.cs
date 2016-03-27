@@ -30,6 +30,8 @@ namespace DS_Lab1
         public bool NWeighted;//Has edges with negative weights
         public bool NCyclic;
         public int Coherency;//0 - не связный,1 - слабосвязный,2 - односторонне связный,3 - сильно связный
+        public bool hasECycle;
+        public bool hasEPaths;
         public List<string> catalogCycles = new List<string>();//List of primitive cycles in form of string,like "1-2-1"
 
         public Graph(string file,bool oriented)
@@ -76,6 +78,8 @@ namespace DS_Lab1
             CheckLoopedVerteses();
             CheckHomogeneity();
             CheckCoherence();
+            CheckEurelianC();
+            CheckEurelianP();
         }
 
         private int[,] FillAdjacencyMatrix()
@@ -520,6 +524,50 @@ namespace DS_Lab1
                         if (Matr[i, j] < 1) Coherency = 0;
             }
 
+        }
+        
+        private void CheckEurelianC()
+        {
+            if (Coherency == 3)
+            {
+                foreach (Vertex v in verteses)
+                    if (v.ipower != v.opower)
+                    {
+                      hasECycle = false;
+                      return;
+                    }
+		hasECycle = true;
+            }
+        }
+        
+        private void CheckEurelianP()
+        {
+            if (hasECycle)
+            {
+                hasEPaths = true;
+                return;
+            }
+            else 
+            {
+                int iCount = 0;
+                int oCount = 0;
+                bool iExists = false;
+                bool oExists = false;
+                foreach (Vertex v in verteses)
+                    if (v.ipower - v.opower  == 1)
+                    {
+                        iExists = true;
+                        iCount++;
+                    }
+                    else if (v.ipower - v.opower == -1)
+                    {
+                    oExists = true;
+                    oCount++;
+                    }
+                    if (iExists && oExists && iCount == 1 && oCount == 1)
+                        hasEPaths = true;
+                    else hasEPaths = false;
+            }
         }
     }
 }
