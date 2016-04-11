@@ -32,6 +32,7 @@ namespace DS_Lab1
         public int Coherency;//0 - не связный,1 - слабосвязный,2 - односторонне связный,3 - сильно связный
         public bool hasECycle;
         public bool hasEPaths;
+        public bool hasGCycle;
         public List<string> catalogCycles = new List<string>();//List of primitive cycles in form of string,like "1-2-1"
 
         public Graph(string file,bool oriented)
@@ -80,6 +81,7 @@ namespace DS_Lab1
             CheckCoherence();
             CheckEurelianC();
             CheckEurelianP();
+            CheckGamiltonianC();
         }
 
         private int[,] FillAdjacencyMatrix()
@@ -537,6 +539,17 @@ namespace DS_Lab1
                     }
 		hasECycle = true;
             }
+        }
+        
+        private void CheckGamiltonianC()
+        {
+            foreach (Vertex v in verteses)
+                if (!(v.ipower >= n/2 && v.opower >= n/2))
+                {
+                    hasGCycle = false;
+                    return;
+                }
+            hasGCycle = true;
         }
         
         private void CheckEurelianP()

@@ -111,7 +111,7 @@ namespace DS_Lab1
         
 
         /// <summary>
-        /// Coherency components search
+        /// Eurelian path search
         /// </summary>
         public void FindEPaths()
         {
@@ -127,6 +127,44 @@ namespace DS_Lab1
                     System.Console.WriteLine();
                 }
             }
+        }
+        
+        private bool checkGamiltonianH(int v)
+        {
+            k++;
+            foreach (int c in graph.verteses[v].adjances)
+            checkGamiltonianH(c);
+            if (k == graph.n)
+                return true;
+            else
+                return false;
+        }
+        
+        private bool checkGamiltonian()
+        {
+            for (int i = 0; i < graph.n;i++)
+                if (checkGamiltonianH(i))
+                    return true;
+            return false;
+        }
+        
+        public void FindGPath()
+        {
+            if (checkGamiltonian())
+                for (int i = 0;i < graph.n;i++)
+                {
+                    if (!used[i])
+                    {
+                        path.Clear();
+                        CmDFS(i);
+                        System.Console.Write("Гамильтонов путь: ");
+                        foreach (int c in path.Reverse())
+                            System.Console.Write(c + 1 + " ");
+                        System.Console.WriteLine();
+                    }
+                }
+            else
+                Console.WriteLine("Граф не гамильтонов");
         }
     }
 }

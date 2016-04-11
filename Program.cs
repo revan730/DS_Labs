@@ -9,7 +9,8 @@ namespace DS_Lab1
 {
     class Program
     {
-        const string menu_text = "1.Алгоритм Беллмана - Форда\n2.Алгоритм Флойда - Уоршелла\n3.Алгоритм Джонсона\n4.Эйлеровы циклы и пути\n5.Перезапуск\n6.Выход";
+        //const string menu_text = "1.Алгоритм Беллмана - Форда\n2.Алгоритм Флойда - Уоршелла\n3.Алгоритм Джонсона\n4.Гамильтоновы циклы и пути\n5.Перезапуск\n6.Выход";
+        const string menu_text = "1.Беллмана-Форда\n2.Перезапуск\n3.Выход";
         static Graph graph;
         static void Main(string[] args)
         {
@@ -75,7 +76,8 @@ namespace DS_Lab1
                             }
                             break;
                         case 4:
-                            PrintEuCycles();
+                            //PrintEuCycles();
+                            PrintGCycles();
                             break;
                         case 5:
                             restart = true;
@@ -283,6 +285,17 @@ namespace DS_Lab1
 
             }
             else Console.WriteLine("Граф не эйлеровский");
+        }
+        
+        static void PrintGCycles()
+        {
+            if (graph.hasGCycle || graph.Cyclic)
+                Console.WriteLine("Граф содержит гамильтонов цикл:{0}",graph.catalogCycles[0]);
+            else
+            {
+                dfs d = new dfs(graph);
+                d.FindGPath();
+            }
         }
     }
 }
