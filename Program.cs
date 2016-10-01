@@ -9,8 +9,7 @@ namespace DS_Lab1
 {
     class Program
     {
-        //const string menu_text = "1.Алгоритм Беллмана - Форда\n2.Алгоритм Флойда - Уоршелла\n3.Алгоритм Джонсона\n4.Гамильтоновы циклы и пути\n5.Перезапуск\n6.Выход";
-        const string menu_text = "1.Беллмана-Форда\n2.Перезапуск\n3.Выход";
+        const string menu_text = "1.Алгоритм Беллмана - Форда\n2.Алгоритм Флойда - Уоршелла\n3.Алгоритм Джонсона\n4.Гамильтоновы циклы и пути\n5.Перезапуск\n6.Выход";
         static Graph graph;
         static void Main(string[] args)
         {
@@ -76,7 +75,6 @@ namespace DS_Lab1
                             }
                             break;
                         case 4:
-                            //PrintEuCycles();
                             PrintGCycles();
                             break;
                         case 5:
@@ -221,7 +219,7 @@ namespace DS_Lab1
         {
             int v;
             System.Console.Write("Введите вершину для начала поиска в глубину:");
-            if (Int32.TryParse(System.Console.ReadLine(),out v))
+            if (Int32.TryParse(System.Console.ReadLine(), out v))
             {
                 dfs dfs = new dfs(graph);
                 System.Console.WriteLine("Содержание стека на каждой итерации:");
